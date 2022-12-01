@@ -44,6 +44,9 @@ def main():
                     except:
                         print("Incorrect Format of the key.")
                         sys.exit(1)
+
+                    print('Current tree')
+                    rbt.print_tree(rbt.root)
                     rbt.insert(key)
                 elif rbtchoice == 2:
                     try:
@@ -51,6 +54,9 @@ def main():
                     except:
                         print("Incorrect Format of the key")
                         sys.exit(1)
+
+                    print('Current tree')
+                    rbt.print_tree(rbt.root)
                     rbt.delete_node(key)
                 elif rbtchoice==3:
                     try:
@@ -58,11 +64,10 @@ def main():
                     except:
                         print("Incorrect Format of the key.")
                         sys.exit(1)
-                    n = rbt.search_tree(key)
-                    if n:
-                        print("Node found: ", str(n))
-                    else:
-                        print("Node with key not found")
+
+                    n = rbt.search_red_black_tree(key)
+                    print(str(n))
+                    rbt.print_tree(rbt.root)
                 elif rbtchoice==4:
                     rbt.print_tree(rbt.root)
                 elif rbtchoice==5:

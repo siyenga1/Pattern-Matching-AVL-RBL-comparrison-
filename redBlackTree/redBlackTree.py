@@ -2,6 +2,9 @@ import sys
 
 
 class NodeColor:
+    """
+    This class represents the color of the tree. It can either be red or black
+    """
     RED = 1
     BLACK = 2
 
@@ -13,10 +16,10 @@ class NodeColor:
             return "B"
 
 
-"""
-    This class represents a single node in red black tree
-"""
 class TreeNode:
+    """
+        This class represents a single node in red black tree
+    """
     def __init__(self, node_value):
         self.value = node_value
         self.parent = None
@@ -28,16 +31,16 @@ class TreeNode:
         if self.value == (-sys.maxsize - 1):
             return 'Node not found'
         else:
-            return 'node found in the tree: value: ' + str(self.value) + ', color: ' + NodeColor.get_color(self.color)
+            return 'node found in the tree: value: ' + str(self.value) + ', color: ' + NodeColor.get_color(self.color) + '\n'
 
 
 class RedBlackTree:
     def __init__(self):
-        self.TNULL = TreeNode(-sys.maxsize - 1)
-        self.TNULL.color = NodeColor.BLACK
-        self.TNULL.left = None
-        self.TNULL.right = None
-        self.root = self.TNULL
+        self.Tree_Node_NULL = TreeNode(-sys.maxsize - 1)
+        self.Tree_Node_NULL.color = NodeColor.BLACK
+        self.Tree_Node_NULL.left = None
+        self.Tree_Node_NULL.right = None
+        self.root = self.Tree_Node_NULL
         self.log_level = 1
 
     # ------ start: helper functions
@@ -46,7 +49,11 @@ class RedBlackTree:
             print(log_string)
 
     def print_tree(self, current_node, level=1):
-        if current_node != self.TNULL:
+        """
+            Print the tree rotated 90 degrees to the left. So we will have right nodes at the top and
+            left nodes at the bottom.
+        """
+        if current_node != self.Tree_Node_NULL:
             self.print_tree(current_node.right, level + 1)
             print(' ' * 12 * level + '----> ' + str(current_node.value) + ', c:' + NodeColor.get_color(
                 current_node.color) + ', l:' + str(level))
@@ -55,21 +62,24 @@ class RedBlackTree:
             if self.log_level > 1:
                 print(' ' * 12 * level + '----> NULL Node')
 
-    def minimum(self, current_node):
-        while current_node.left != self.TNULL:
+    def min(self, current_node):
+        while current_node.left != self.Tree_Node_NULL:
             current_node = current_node.left
         return current_node
 
     def maximum(self, current_node):
-        while current_node.right != self.TNULL:
+        while current_node.right != self.Tree_Node_NULL:
             current_node = current_node.right
         return current_node
 
     def left_rotate(self, current_node):
-        self.log('left rotating - [' + str(current_node.value) + ']')
+        """
+            Here we perform left rotation around the nodes provided.
+        """
+        self.log('Left rotating - [' + str(current_node.value) + ']')
         c_right_node = current_node.right
         current_node.right = c_right_node.left
-        if c_right_node.left != self.TNULL:
+        if c_right_node.left != self.Tree_Node_NULL:
             c_right_node.left.parent = current_node
 
         c_right_node.parent = current_node.parent
@@ -82,11 +92,17 @@ class RedBlackTree:
         c_right_node.left = current_node
         current_node.parent = c_right_node
 
+        self.print_tree(self.root)
+        print('\n')
+
     def right_rotate(self, current_node):
-        self.log('right rotating - [' + str(current_node.value) + ']')
+        """
+            Here we perform right rotation around the nodes provided.
+        """
+        self.log('Right rotating - [' + str(current_node.value) + ']')
         c_left_node = current_node.left
         current_node.left = c_left_node.right
-        if c_left_node.right != self.TNULL:
+        if c_left_node.right != self.Tree_Node_NULL:
             c_left_node.right.parent = current_node
 
         c_left_node.parent = current_node.parent
@@ -99,27 +115,40 @@ class RedBlackTree:
         c_left_node.right = current_node
         current_node.parent = c_left_node
 
+        self.print_tree(self.root)
+        print('\n')
     # ------ end: helper functions
 
     # ------ start: searching a node
     # Search the red black tree
-    def _search_tree(self, search_node, node_value):
-        if search_node == self.TNULL or node_value == search_node.value:
+    def _search_red_black_tree(self, search_node, node_value):
+        if search_node == self.Tree_Node_NULL or node_value == search_node.value:
             return search_node
 
         if node_value < search_node.value:
-            return self._search_tree(search_node.left, node_value)
+            return self._search_red_black_tree(search_node.left, node_value)
 
-        return self._search_tree(search_node.right, node_value)
+        return self._search_red_black_tree(search_node.right, node_value)
 
-    def search_tree(self, node_value):
-        self.log('searching for node - [' + str(node_value) + ']')
-        return self._search_tree(self.root, node_value)
+    def search_red_black_tree(self, node_value):
+        self.log('Searching for node - [' + str(node_value) + '] in the tree')
+        return self._search_red_black_tree(self.root, node_value)
     # ------ end: searching a node
 
     # ------ start: deleting a node
     # Balancing the tree after deletion
     def balance_after_delete(self, c_node):
+        """
+            To balance the tree after deleting a node we check following conditions
+            - If the node to be deleted is red color and leaf node, just deleted it.
+            - If the node to be deleted is red color and has single black child, just deleted it.
+            - If node to be deleted is black and it’s sibling is red then delete the node and perform left/right
+            rotation on parent node.
+            - If node to be deleted is black and it’s sibling is black then
+                > If sibling has both black children perform recoloring by making sibling red and sibling’s parent
+                  black. Continue rebalancing to the top.
+                > If sibling has red children then perform required rotation
+        """
         while c_node != self.root and c_node.color == NodeColor.BLACK:
             if c_node == c_node.parent.left:
                 sibling = c_node.parent.right
@@ -167,23 +196,35 @@ class RedBlackTree:
                     sibling.left.color = NodeColor.BLACK
                     self.right_rotate(c_node.parent)
                     c_node = self.root
-        c_node.color = 0
+        c_node.color = NodeColor.BLACK
 
-    def transplant(self, u, v):
-        if u.parent is None:
-            self.root = v
-        elif u == u.parent.left:
-            u.parent.left = v
+    # this is the transplant function in the BST
+    def replace_node(self, node_to_be_deleted, node_to_be_replaced_with):
+        """
+            Replace the node based on what side the current node is with respect to the parent.
+            Set the current node's parent to the replacement node's parent.
+        """
+        if node_to_be_deleted.parent is None:
+            self.root = node_to_be_replaced_with
+        elif node_to_be_deleted == node_to_be_deleted.parent.left:
+            node_to_be_deleted.parent.left = node_to_be_replaced_with
         else:
-            u.parent.right = v
-        v.parent = u.parent
+            node_to_be_deleted.parent.right = node_to_be_replaced_with
+
+        node_to_be_replaced_with.parent = node_to_be_deleted.parent
+        self.print_tree(self.root)
 
     # Node deletion
     def _delete_node(self, current_node, node_value):
-        node_to_be_deleted = self.TNULL
+        """
+            Search for the node in the tree, if found delete it and find the replacement node.
+            We only delete the leaf nodes so we perform replacement operations when deleting a node that has
+            more than one children.
+        """
+        node_to_be_deleted = self.Tree_Node_NULL
 
         # search the node to be deleted
-        while current_node != self.TNULL:
+        while current_node != self.Tree_Node_NULL:
             if current_node.value == node_value:
                 node_to_be_deleted = current_node
 
@@ -192,44 +233,60 @@ class RedBlackTree:
             else:
                 current_node = current_node.left
 
-        if node_to_be_deleted == self.TNULL:
-            print("Cannot find key in the tree")
+        if node_to_be_deleted == self.Tree_Node_NULL:
+            print('Delete operation: Cannot find node [' + str(node_value) + '] in the tree')
             return
 
-        y = node_to_be_deleted
-        y_original_color = y.color
-        if node_to_be_deleted.left == self.TNULL:
-            x = node_to_be_deleted.right
-            self.transplant(node_to_be_deleted, node_to_be_deleted.right)
-        elif node_to_be_deleted.right == self.TNULL:
-            x = node_to_be_deleted.left
-            self.transplant(node_to_be_deleted, node_to_be_deleted.left)
-        else:
-            y = self.minimum(node_to_be_deleted.right)
-            y_original_color = y.color
-            x = y.right
-            if y.parent == node_to_be_deleted:
-                x.parent = y
-            else:
-                self.transplant(y, y.right)
-                y.right = node_to_be_deleted.right
-                y.right.parent = y
+        t_node_to_be_deleted = node_to_be_deleted
+        t_node_to_be_deleted_original_color = t_node_to_be_deleted.color
 
-            self.transplant(node_to_be_deleted, y)
-            y.left = node_to_be_deleted.left
-            y.left.parent = y
-            y.color = node_to_be_deleted.color
-        if y_original_color == NodeColor.BLACK:
-            self.balance_after_delete(x)
+        if node_to_be_deleted.right == self.Tree_Node_NULL:
+            replace_node = node_to_be_deleted.left
+            print('Delete operation: replacing with left node of [' + str(node_to_be_deleted.value) + ']')
+            self.replace_node(node_to_be_deleted, node_to_be_deleted.left)
+        elif node_to_be_deleted.left == self.Tree_Node_NULL:
+            replace_node = node_to_be_deleted.right
+            print('Delete operation: replacing with right node of [' + str(node_to_be_deleted.value) + ']')
+            self.replace_node(node_to_be_deleted, node_to_be_deleted.right)
+        else:
+            # find the successor to replace the node
+            t_node_to_be_deleted = self.min(node_to_be_deleted.right)
+            print('Delete operation: replacing node [' + str(node_to_be_deleted.value) + '] with successor node [' + str(t_node_to_be_deleted.value) + ']')
+            t_node_to_be_deleted_original_color = t_node_to_be_deleted.color
+            replace_node = t_node_to_be_deleted.right
+            if t_node_to_be_deleted.parent == node_to_be_deleted:
+                replace_node.parent = t_node_to_be_deleted
+            else:
+                self.replace_node(t_node_to_be_deleted, t_node_to_be_deleted.right)
+                t_node_to_be_deleted.right = node_to_be_deleted.right
+                t_node_to_be_deleted.right.parent = t_node_to_be_deleted
+
+            self.replace_node(node_to_be_deleted, t_node_to_be_deleted)
+            t_node_to_be_deleted.left = node_to_be_deleted.left
+            t_node_to_be_deleted.left.parent = t_node_to_be_deleted
+            t_node_to_be_deleted.color = node_to_be_deleted.color
+
+        if t_node_to_be_deleted_original_color == NodeColor.BLACK:
+            self.balance_after_delete(replace_node)
 
     def delete_node(self, node_value):
-        self.log('deleting node - [' + str(node_value) + ']')
+        self.log('Deleting node - [' + str(node_value) + ']')
         self._delete_node(self.root, node_value)
+        print('Delete completed, final tree ')
+        self.print_tree(self.root)
     # ------ end: deleting new node
 
     # ------ start: inserting new node
     # iteratively balance the tree after insertion
     def balance_tree_after_insert(self, current_node):
+        """
+            To balance a tree after inserting a new node we perform following steps
+            - Recolor if parent’s sibling is red color
+            - Rotation is done when parent’s sibling is black color
+                > Rotation has four cases LL, LR, RR, RL
+                > LR is performed by doing left rotation on parent and then right rotation on grandparent
+                > RL is performed by doing right rotation on parent and then left rotation on grandparent
+        """
         while current_node.parent.color == NodeColor.RED:
             # if parent is right child of grandparent
             if current_node.parent == current_node.parent.parent.right:
@@ -269,35 +326,45 @@ class RedBlackTree:
 
             if current_node == self.root:
                 break
+
         self.root.color = NodeColor.BLACK
 
     # insert a new node to the red black tree
     def insert(self, node_value):
-        self.log('inserting node - [' + str(node_value) + ']')
+        """
+            Insert a node like BST and call re-balancing
+        """
+        self.log('Inserting node - [' + str(node_value) + ']')
         new_node = TreeNode(node_value)
         new_node.parent = None
         new_node.value = node_value
-        new_node.left = self.TNULL
-        new_node.right = self.TNULL
+        new_node.left = self.Tree_Node_NULL
+        new_node.right = self.Tree_Node_NULL
         new_node.color = NodeColor.RED
 
-        y = None
-        x = self.root
+        new_node_parent = None
+        current_node = self.root
 
-        while x != self.TNULL:
-            y = x
-            if new_node.value < x.value:
-                x = x.left
+        while current_node != self.Tree_Node_NULL:
+            new_node_parent = current_node
+            if new_node.value == current_node.value:
+                print('The node with value [' + str(node_value) + '] already exists in the tree')
+                return
+            elif new_node.value < current_node.value:
+                current_node = current_node.left
             else:
-                x = x.right
+                current_node = current_node.right
 
-        new_node.parent = y
-        if y is None:
+        new_node.parent = new_node_parent
+        if new_node_parent is None:
             self.root = new_node
-        elif new_node.value < y.value:
-            y.left = new_node
+        elif new_node.value < new_node_parent.value:
+            new_node_parent.left = new_node
         else:
-            y.right = new_node
+            new_node_parent.right = new_node
+
+        self.print_tree(self.root)
+        print('\n\n')
 
         if new_node.parent is None:
             new_node.color = NodeColor.BLACK
@@ -309,34 +376,3 @@ class RedBlackTree:
         self.balance_tree_after_insert(new_node)
 
     # ------ end: inserting new node
-
-
-# if __name__ == "__main__":
-#     red_black_tree = RedBlackTree()
-#     nodes = [8, 18, 5, 15, 17, 25, 40, 80]
-#
-#     for node in nodes:
-#         red_black_tree.insert(node)
-#         red_black_tree.print_tree(red_black_tree.root)
-#         print('\n\n')
-#
-#     red_black_tree.print_tree(red_black_tree.root)
-#
-#     red_black_tree.delete_node(25)
-#     red_black_tree.print_tree(red_black_tree.root)
-#     node = red_black_tree.search_tree(25)
-#     print(str(node))
-#
-#     red_black_tree.delete_node(15)
-#     red_black_tree.print_tree(red_black_tree.root)
-#     node = red_black_tree.search_tree(15)
-#     print(str(node))
-#
-#     node = red_black_tree.search_tree(18)
-#     print(str(node))
-#
-#     red_black_tree.delete_node(5)
-#     red_black_tree.print_tree(red_black_tree.root)
-#
-#     red_black_tree.delete_node(8)
-#     red_black_tree.print_tree(red_black_tree.root)
