@@ -1,3 +1,9 @@
+"""
+References:
+https://www.cs.princeton.edu/~wayne/cs423/lectures/stringsearch-4up.pdf
+"""
+
+
 class KMP:
     """
      KMP class that has
@@ -6,7 +12,8 @@ class KMP:
      Kmp Search method use the table and search for pattern
     """
 
-    def myInput(self):
+    @staticmethod
+    def myInput():
         count1 = 0
         count2 = 0
         """
@@ -53,14 +60,22 @@ class KMP:
                 count2 += 1
             print("The number of times the pattern is found = ", count2)
 
-    def myLCSTable(self, pattern, sizeOfPattern):
+    @staticmethod
+    def myLCSTable(pattern, sizeOfPattern):
         """
         LCS table to store the pattern that's already been discovered
-        initialize this table to 0 values
+        initialize this table to 0 values.
+        For example:
+        If t[0..4] matches p[0..4] then t[1..4] matches p[0..3].
+        – no need to check i=1,j=0,1,2,3
+        – saves 4 comparisons
         """
         lcsTable = [0] * sizeOfPattern
         i = 1
         j = 0
+        """
+        Iterates over the pattern
+        """
         while i != sizeOfPattern:
             if pattern[i] == pattern[j]:
                 j = j + 1
@@ -91,16 +106,17 @@ class KMP:
         and pointer for pattern as j
         """
         patternPos = []
-        i = 0;
-        j = 0;
+        i = 0
+        j = 0
 
         while i != sizeOfString:
             """
             casefold() makes sure the strings are case-insensitive
+            For ex: DATA structure = data structure 
             """
             if string[i].casefold() == pattern[j].casefold():
-                i = i + 1;
-                j = j + 1;
+                i = i + 1
+                j = j + 1
             else:
                 """
                 Pattern not found, 
@@ -115,9 +131,9 @@ class KMP:
                 patternPos.append(i - j)
                 j = lcsTable[j - 1]
                 """
-                Reached the end of string but j is zero
+                Reached the end of string 
                 """
             elif j == 0:
-                i += 1;
+                i += 1
 
         return patternPos

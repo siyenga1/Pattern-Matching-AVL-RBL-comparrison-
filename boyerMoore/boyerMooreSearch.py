@@ -52,6 +52,8 @@ class BoyerMooreSearch:
         delta1 = [patlen] * 256
 
         for i in range(patlen - 1):
+            if ord(pattern[i])>256:
+                print(pattern[i], ord(pattern[i]))
             delta1[ord(pattern[i])] = patlen - i - 1
 
         return delta1
@@ -216,6 +218,7 @@ class BoyerMooreSearch:
                 # use bad character table
                 if j + 1 == patlen:
                     bad_char = text[s + j]
+                    #print(bad_char,ord(bad_char))
                     bad_char_occ = delta1[ord(bad_char)] - (patlen - j)
                     s += max(1, bad_char_occ)
                 elif delta2_1[j + 1] != 0:

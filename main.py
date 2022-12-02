@@ -1,5 +1,4 @@
 import sys
-
 from avl.avl import AVLTree
 from boyerMoore.boyerMooreSearch import BoyerMooreSearch
 from kmp.kmp import KMP
@@ -58,7 +57,7 @@ def main():
                     print('Current tree')
                     rbt.print_tree(rbt.root)
                     rbt.delete_node(key)
-                elif rbtchoice==3:
+                elif rbtchoice == 3:
                     try:
                         key = int(input("Enter the Key to search:"))
                     except:
@@ -68,9 +67,9 @@ def main():
                     n = rbt.search_red_black_tree(key)
                     print(str(n))
                     rbt.print_tree(rbt.root)
-                elif rbtchoice==4:
+                elif rbtchoice == 4:
                     rbt.print_tree(rbt.root)
-                elif rbtchoice==5:
+                elif rbtchoice == 5:
                     print("Going back to Main Menu")
                     break
                 else:
@@ -91,21 +90,21 @@ def main():
                 except:
                     print("Incorrect Format of the choice")
                     sys.exit(1)
-                if avlchoice==1:
+                if avlchoice == 1:
                     try:
                         key = int(input("Enter the Key to insert:"))
                     except:
                         print("Incorrect Format of the key")
                         sys.exit(1)
                     avl.insert(key)
-                elif avlchoice==2:
+                elif avlchoice == 2:
                     try:
                         key = int(input("Enter the Key to remove:"))
                     except:
                         print("Incorrect Format of the key")
                         sys.exit(1)
                     avl.delete(key)
-                elif avlchoice==3:
+                elif avlchoice == 3:
                     try:
                         key = int(input("Enter the Key to search:"))
                     except:
@@ -116,7 +115,7 @@ def main():
                         print("Node found: ", n)
                     else:
                         print("Node with key not found")
-                elif avlchoice==4:
+                elif avlchoice == 4:
                     avl.printTree()
                 # elif avlchoice==5:
                 #     avl.printInOrder()
@@ -124,23 +123,30 @@ def main():
                 #     avl.printPreOrder()
                 # elif avlchoice==7:
                 #     avl.printPostOrder()
-                elif avlchoice==5:
+                elif avlchoice == 5:
                     print("Going back to Main Menu")
                     break
                 else:
                     print("Please enter the correct choice")
-
-
         elif choice == 4:
             print("*********************WELCOME TO BOYER MOORE SEARCH ALGORITHM*******************")
             boyerMoore = BoyerMooreSearch()
             string = input("Please enter the first input string ")
             pattern = input("Please enter the pattern to be matched ")
-            if len(string)==0 or len(pattern)==0:
+            for i in string:
+                if ord(i)>256 or ord(i)<0:
+                    print("Character: "+i+" Encoding: "+str(ord(i))+" Please provide input with correct encoding. Our program accepts 256 character encoding.")
+                    print("EXITING NOW...")
+                    sys.exit(1)
+            for i in pattern:
+                if ord(i)>256 or ord(i)<0:
+                    print("Character: "+i+" Encoding: "+str(ord(i))+" Please provide input with correct encoding. Our program accepts 256 character encoding.")
+                    print("EXITING NOW...")
+                    sys.exit(1)
+            if len(string) == 0 or len(pattern) == 0:
                 print("Empty String or Empty Pattern")
             else:
                 boyerMoore.search(string, pattern)
-
         elif choice == 5:
             print("EXITING NOW...")
             sys.exit(1)
@@ -149,7 +155,6 @@ def main():
 
         print("")
         print("Please enter the next algorithm you want to try or exit")
-    end
 
 
 if __name__ == "__main__":
