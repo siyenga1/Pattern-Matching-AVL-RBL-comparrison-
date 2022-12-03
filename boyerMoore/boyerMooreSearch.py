@@ -169,7 +169,8 @@ class BoyerMooreSearch:
 
     def search(self, text, pattern=None):
         """
-        Searches the pattern in text.
+        Searches the pattern in text in
+        case-sensitive manner.
         Incase, pattern has been set already,
         We can search using the text only.
         """
